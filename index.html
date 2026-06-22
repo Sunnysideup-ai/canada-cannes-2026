@@ -73,7 +73,6 @@ function Leaf({size=20,color=MAPLE}) {
   </svg>;
 }
 
-// ── API Key Modal ─────────────────────────────────────────────────────────────
 function ApiKeyModal({onClose, onSave, currentKey}) {
   const [key, setKey] = R.useState(currentKey || "");
   const [step, setStep] = R.useState(1);
@@ -81,19 +80,17 @@ function ApiKeyModal({onClose, onSave, currentKey}) {
   return (
     <div className="modal-overlay fade-in" onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div className="modal-box slide-in">
-        {/* Header */}
         <div style={{background:DARK,padding:"18px 20px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <Leaf size={18}/>
             <div>
-              <div style={{color:"#fff",fontWeight:800,fontSize:15}}>🔑 Connect Live Refresh</div>
-              <div style={{color:"#888",fontSize:11,marginTop:2}}>Free Google Gemini API · No credit card</div>
+              <div style={{color:"#fff",fontWeight:800,fontSize:15}}>🔑 Live Refresh Setup</div>
+              <div style={{color:"#888",fontSize:11,marginTop:2}}>Google Gemini API (Paid)</div>
             </div>
           </div>
           <button onClick={onClose} style={{background:"none",border:"none",color:"#888",fontSize:20,padding:4}}>✕</button>
         </div>
 
-        {/* Step tabs */}
         <div style={{display:"flex",borderBottom:`1px solid ${BORDER}`}}>
           {["Get Key","Enter Key"].map((s,i)=>(
             <button key={s} onClick={()=>setStep(i+1)} style={{
@@ -105,16 +102,15 @@ function ApiKeyModal({onClose, onSave, currentKey}) {
           ))}
         </div>
 
-        {/* Content */}
         <div style={{padding:"20px"}}>
           {step===1 ? (
             <div>
-              <div style={{fontSize:14,fontWeight:800,color:DARK,marginBottom:12}}>Get your free Gemini API key</div>
+              <div style={{fontSize:14,fontWeight:800,color:DARK,marginBottom:12}}>Get your Gemini API key (Paid)</div>
               <div style={{display:"flex",flexDirection:"column",gap:14}}>
                 {[
-                  {n:1, t:"Go to Google AI Studio", d:<>Open <strong style={{color:MAPLE}}>aistudio.google.com</strong> in your browser</>, action:<a href="https://aistudio.google.com" target="_blank" style={{display:"block",marginTop:8,padding:"8px 14px",background:MAPLE,color:"#fff",borderRadius:8,fontSize:12,fontWeight:700,textDecoration:"none",textAlign:"center"}}>Open AI Studio →</a>},
-                  {n:2, t:"Sign in with Google", d:"Click Sign In — use your regular Google / Gmail account. No new account needed."},
-                  {n:3, t:"Create API Key", d:<>Click <strong>Get API Key</strong> → <strong>Create API key</strong> → Copy it</>},
+                  {n:1, t:"Go to Google AI Studio", d:<>Open <strong style={{color:MAPLE}}>aistudio.google.com</strong></>, action:<a href="https://aistudio.google.com" target="_blank" style={{display:"block",marginTop:8,padding:"8px 14px",background:MAPLE,color:"#fff",borderRadius:8,fontSize:12,fontWeight:700,textDecoration:"none",textAlign:"center"}}>Open AI Studio →</a>},
+                  {n:2, t:"Go to API Keys", d:<>Click <strong>Dashboard</strong> in left sidebar → <strong>API Keys</strong></>},
+                  {n:3, t:"Create a NEW key for paid", d:<>Click <strong>Create API key</strong> → Make sure it's under your PAID project → Copy it</>},
                 ].map(s=>(
                   <div key={s.n} style={{display:"flex",gap:12,alignItems:"flex-start"}}>
                     <div style={{width:26,height:26,borderRadius:"50%",background:MAPLE,color:"#fff",fontSize:12,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{s.n}</div>
@@ -127,14 +123,14 @@ function ApiKeyModal({onClose, onSave, currentKey}) {
                 ))}
               </div>
               <button onClick={()=>setStep(2)} style={{width:"100%",marginTop:20,padding:"10px",background:MAPLE,color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:700}}>
-                I have my key → Next
+                I have my PAID key → Next
               </button>
             </div>
           ) : (
             <div>
-              <div style={{fontSize:14,fontWeight:800,color:DARK,marginBottom:8}}>Paste your Gemini API key</div>
+              <div style={{fontSize:14,fontWeight:800,color:DARK,marginBottom:8}}>Paste your PAID Gemini API key</div>
               <div style={{fontSize:12,color:MID,marginBottom:14,lineHeight:1.6}}>
-                Your key is saved only in your browser. It looks like <strong>AIzaSy...</strong>
+                Make sure this is from your PAID project, not the free tier. Starts with <strong>AIzaSy...</strong>
               </div>
               <input
                 value={key}
@@ -143,17 +139,17 @@ function ApiKeyModal({onClose, onSave, currentKey}) {
                 style={{width:"100%",padding:"10px 14px",border:`2px solid ${key.startsWith("AI")?"#2d5a2d":BORDER}`,borderRadius:8,fontSize:13,outline:"none",marginBottom:10,fontFamily:"monospace"}}
               />
               {key.startsWith("AI") && (
-                <div style={{fontSize:11,color:"#2d5a2d",marginBottom:10}}>✅ Looks good!</div>
+                <div style={{fontSize:11,color:"#2d5a2d",marginBottom:10}}>✅ Key format looks good</div>
               )}
               <div style={{fontSize:11,color:MID,marginBottom:14,padding:"10px 12px",background:"#f9f9f9",borderRadius:8,lineHeight:1.6}}>
-                🔒 Your key is stored only in your browser's local storage. It's never sent anywhere except directly to Google's API.
+                🔒 Stored in browser only. Only sent to Google's API.
               </div>
               <button
                 onClick={()=>{ if(key.length>10){ onSave(key); }}}
                 disabled={key.length<10}
                 style={{width:"100%",padding:"10px",background:key.length>10?MAPLE:"#ccc",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:700}}
               >
-                ✅ Save & Enable Refresh
+                ✅ Save & Test Refresh
               </button>
             </div>
           )}
@@ -163,7 +159,6 @@ function ApiKeyModal({onClose, onSave, currentKey}) {
   );
 }
 
-// ── Main App ──────────────────────────────────────────────────────────────────
 function App() {
   const [entries, setEntries]           = R.useState(SEED);
   const [loading, setLoading]           = R.useState(false);
@@ -174,17 +169,17 @@ function App() {
   const [aiSummary, setAiSummary]       = R.useState("");
   const [summaryLoading, setSummaryLoading] = R.useState(false);
   const [showModal, setShowModal]       = R.useState(false);
-  const [apiKey, setApiKey]             = R.useState(()=>localStorage.getItem("gemini_api_key")||"");
+  const [apiKey, setApiKey]             = R.useState(()=>localStorage.getItem("gemini_paid_key")||"");
   const [toast, setToast]               = R.useState("");
 
-  const showToast = (msg) => { setToast(msg); setTimeout(()=>setToast(""),4000); };
+  const showToast = (msg) => { setToast(msg); setTimeout(()=>setToast(""),5000); };
 
   const saveKey = (k) => {
     setApiKey(k);
-    localStorage.setItem("gemini_api_key", k);
+    localStorage.setItem("gemini_paid_key", k);
     setShowModal(false);
-    showToast("✅ API key saved! Fetching live data...");
-    setTimeout(()=>refresh(k), 500);
+    showToast("✅ Key saved! Testing refresh...");
+    setTimeout(()=>refresh(k), 800);
   };
 
   const refresh = async (keyOverride) => {
@@ -198,20 +193,29 @@ function App() {
     const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
 
     const ask = async (prompt) => {
-      const r = await fetch(GEMINI_URL, {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({
-          contents:[{parts:[{text: prompt}]}],
-          tools:[{google_search:{}}]
-        })
-      });
-      const d = await r.json();
-      if (d.error) throw new Error(d.error.message);
-      return d.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      try {
+        const r = await fetch(GEMINI_URL, {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({
+            contents:[{parts:[{text: prompt}]}],
+            tools:[{google_search:{}}]
+          })
+        });
+        const d = await r.json();
+        if (d.error) {
+          const errMsg = d.error.message || "";
+          if (errMsg.includes("quota") || errMsg.includes("exceeded")) {
+            throw new Error("API_QUOTA_ERROR: Free tier quota exceeded. Using paid key? Check in https://console.cloud.google.com/billing");
+          }
+          throw new Error(errMsg);
+        }
+        return d.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      } catch (e) {
+        throw e;
+      }
     };
 
-    // Fetch entries
     try {
       const text = await ask(
         `Search the web for the very latest Canadian agency results at Cannes Lions 2026 (festival runs June 22-26 2026 in Cannes France). 
@@ -229,23 +233,31 @@ function App() {
           fresh.forEach(f=>map.set(keyOf(f),{...(map.get(keyOf(f))||{}), ...f}));
           return Array.from(map.values());
         });
-        showToast(`✅ Updated with ${fresh.length} entries from Cannes!`);
+        showToast(`✅ Success! Found ${fresh.length} fresh entries from Cannes`);
       } else {
-        showToast("⚠️ Got a response but couldn't parse entries. Try again.");
+        showToast("⚠️ Got results but couldn't parse JSON. Try again in a moment.");
       }
       setLastUpdated(new Date());
     } catch(e) {
-      showToast("❌ Error: " + (e.message.includes("API_KEY") ? "Invalid API key. Tap ⚙️ to update it." : e.message));
+      const msg = e.message || "Unknown error";
+      if (msg.includes("API_QUOTA_ERROR")) {
+        showToast("❌ Still free tier quota. Confirm paid project in Google Console.");
+      } else if (msg.includes("API_KEY") || msg.includes("invalid")) {
+        showToast("❌ Invalid API key. Check in ⚙️ Setup.");
+      } else {
+        showToast("❌ " + msg.substring(0,60));
+      }
     } finally { setLoading(false); }
 
-    // Fetch summary
     try {
       const s = await ask(
         `Search for the latest news on how Canada is performing at Cannes Lions 2026 (June 22-26 2026). 
         Write 2-3 punchy journalistic sentences covering Canada's overall showing, standout agencies, and any Lions won so far. 
         Be specific with agency names and campaign names. Plain text only, no markdown.`
       );
-      if (s) setAiSummary(s.replace(/\*\*/g,"").replace(/\*/g,"").trim());
+      if (s && !s.includes("exceeded") && !s.includes("quota")) {
+        setAiSummary(s.replace(/\*\*/g,"").replace(/\*/g,"").trim());
+      }
     } catch(e) {} finally { setSummaryLoading(false); }
   };
 
@@ -269,13 +281,10 @@ function App() {
   return (
     <div style={{maxWidth:680,margin:"0 auto",minHeight:"100vh"}}>
 
-      {/* Toast */}
       {toast && <div className="slide-in" style={{position:"fixed",top:16,right:16,zIndex:2000,background:DARK,color:"#fff",padding:"10px 18px",borderRadius:8,fontSize:13,fontWeight:600,boxShadow:"0 4px 24px rgba(0,0,0,0.35)",maxWidth:320,lineHeight:1.5}}>{toast}</div>}
 
-      {/* Modal */}
       {showModal && <ApiKeyModal onClose={()=>setShowModal(false)} onSave={saveKey} currentKey={apiKey}/>}
 
-      {/* ── Header ── */}
       <div style={{background:DARK,color:"#fff",padding:"26px 18px 22px",position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:0,right:0,bottom:0,width:160,background:"linear-gradient(135deg,transparent 40%,#D42B2B15 100%)",pointerEvents:"none"}}/>
         <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:10}}>
@@ -294,7 +303,7 @@ function App() {
             borderRadius:8,color:apiKey?"#5aab5a":MAPLE,
             fontSize:11,fontWeight:700,display:"flex",alignItems:"center",gap:6,flexShrink:0,marginTop:2,
           }}>
-            {apiKey?"🟢 Live":"🔴 Setup"} <span style={{fontSize:10,opacity:0.7}}>⚙️</span>
+            {apiKey?"🟢 Ready":"🔴 Setup"} <span style={{fontSize:10,opacity:0.7}}>⚙️</span>
           </button>
         </div>
 
@@ -305,7 +314,6 @@ function App() {
         )}
       </div>
 
-      {/* ── Stats ── */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,padding:"12px 12px 0"}}>
         {[
           {v:entries.length, l:"Entries",  c:DARK},
@@ -320,7 +328,6 @@ function App() {
         ))}
       </div>
 
-      {/* ── Leaderboard ── */}
       <div style={{padding:"10px 12px 0"}}>
         <div style={{background:"#fff",border:`1px solid ${BORDER}`,borderRadius:10,overflow:"hidden"}}>
           <div style={{padding:"9px 14px",borderBottom:`1px solid ${BORDER}`,fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",color:MID}}>
@@ -336,11 +343,9 @@ function App() {
         </div>
       </div>
 
-      {/* ── Table ── */}
       <div style={{padding:"10px 12px 28px"}}>
         <div style={{background:"#fff",border:`1px solid ${BORDER}`,borderRadius:10,overflow:"hidden"}}>
 
-          {/* Controls */}
           <div style={{padding:"10px 12px",borderBottom:`1px solid ${BORDER}`,display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
             <input
               placeholder="Search campaign, agency, brand..."
@@ -357,14 +362,12 @@ function App() {
             </button>
           </div>
 
-          {/* Status pills */}
           <div style={{padding:"7px 12px",borderBottom:`1px solid ${BORDER}`,display:"flex",gap:5,flexWrap:"wrap"}}>
             {statusFilters.map(f=>(
               <button key={f} className="pill-btn" onClick={()=>setStatusFilter(f)} style={{padding:"3px 10px",borderRadius:20,border:`1px solid ${statusFilter===f?BLUE:BORDER}`,background:statusFilter===f?BLUE:"#fff",color:statusFilter===f?"#fff":MID,fontSize:10,fontWeight:600}}>{f}</button>
             ))}
           </div>
 
-          {/* Category pills */}
           <div style={{padding:"7px 12px",borderBottom:`1px solid ${BORDER}`,display:"flex",gap:5,overflowX:"auto"}}>
             {cats.map(c=>(
               <button key={c} className="pill-btn" onClick={()=>setCatFilter(c)} style={{padding:"3px 10px",borderRadius:20,whiteSpace:"nowrap",border:`1px solid ${catFilter===c?MAPLE:BORDER}`,background:catFilter===c?MAPLE:"#fff",color:catFilter===c?"#fff":MID,fontSize:10,fontWeight:600}}>
@@ -377,7 +380,6 @@ function App() {
             Showing {filtered.length} of {entries.length} entries
           </div>
 
-          {/* Rows */}
           {filtered.length===0
             ? <div style={{padding:"36px 20px",textAlign:"center",color:MID,fontSize:14}}>No entries found</div>
             : filtered.map(e=>{
@@ -405,7 +407,6 @@ function App() {
         </div>
       </div>
 
-      {/* Footer */}
       <div style={{padding:"0 12px 28px",textAlign:"center"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:4}}>
           <Leaf size={12}/>
