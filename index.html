@@ -23,6 +23,8 @@
   .pill-btn:hover { opacity: 0.85; }
   .modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px; }
   .modal-box { background:#fff;border-radius:16px;width:100%;max-width:420px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+  a { color: inherit; text-decoration: none; }
+  a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -39,20 +41,20 @@ const BORDER= "#E2DDD6";
 const BLUE  = "#1A3A5C";
 
 const SEED = [
-  {id:1,  campaign:"Supernova Adaptive",       brand:"Adidas",              agency:"TBWA\\Canada",       category:"Glass: The Lion for Change", sub:"Glass",      status:"Shortlisted"},
-  {id:2,  campaign:"Supernova Adaptive",       brand:"Adidas",              agency:"TBWA\\Canada",       category:"Innovation Lions",           sub:"Innovation", status:"Shortlisted"},
-  {id:3,  campaign:"Sport Inclusion Campaign", brand:"Special Olympics CA", agency:"GUT Toronto",        category:"Glass: The Lion for Change", sub:"Glass",      status:"Shortlisted"},
-  {id:4,  campaign:"Klick Health Pharma Work", brand:"Pharma Client",       agency:"Klick Health",       category:"Health & Wellness",          sub:"Health",     status:"Shortlisted"},
-  {id:5,  campaign:"NFA Health Campaign",      brand:"Canadian Brand",      agency:"No Fixed Address",   category:"Health & Wellness",          sub:"Health",     status:"Shortlisted"},
-  {id:6,  campaign:"Outdoor Campaign",         brand:"Canadian Client",     agency:"Rethink",            category:"Outdoor Lions",              sub:"Outdoor",    status:"Shortlisted"},
-  {id:7,  campaign:"Courage Campaign",         brand:"Canadian Brand",      agency:"Courage",            category:"Health & Wellness",          sub:"Health",     status:"Shortlisted"},
-  {id:8,  campaign:"The Undropped Kit",        brand:"ASICS",               agency:"Angry Butterfly",    category:"Film Lions",                 sub:"Film",       status:"Shortlisted"},
-  {id:9,  campaign:"Heinz Outdoor",            brand:"Heinz Ketchup",       agency:"Rethink",            category:"Outdoor Lions",              sub:"Outdoor",    status:"Shortlisted"},
-  {id:10, campaign:"Infinite Saree",           brand:"Red Dot Foundation",  agency:"Carat / UM Toronto", category:"Media Lions",                sub:"Media",      status:"Shortlisted"},
-  {id:11, campaign:"Dentsu Creative Work",     brand:"Canadian Brand",      agency:"Dentsu Creative",    category:"Film Craft",                 sub:"Film",       status:"Shortlisted"},
-  {id:12, campaign:"LG2 Design Work",          brand:"Canadian Brand",      agency:"LG2",                category:"Design Lions",               sub:"Design",     status:"Shortlisted"},
-  {id:13, campaign:"VW Campaign",              brand:"Volkswagen",          agency:"TBWA\\Canada",       category:"Outdoor Lions",              sub:"Outdoor",    status:"Shortlisted"},
-  {id:14, campaign:"Edelman Canada PR",        brand:"Canadian Brand",      agency:"Edelman Canada",     category:"PR Lions",                   sub:"PR",         status:"Shortlisted"},
+  {id:1,  campaign:"Supernova Adaptive",       brand:"Adidas",              agency:"TBWA\\Canada",       category:"Glass: The Lion for Change", sub:"Glass",      status:"Shortlisted", link:"https://www.instagram.com/explore/tags/adidasadaptive/"},
+  {id:2,  campaign:"Supernova Adaptive",       brand:"Adidas",              agency:"TBWA\\Canada",       category:"Innovation Lions",           sub:"Innovation", status:"Shortlisted", link:"https://www.instagram.com/explore/tags/adidasadaptive/"},
+  {id:3,  campaign:"Sport Inclusion Campaign", brand:"Special Olympics CA", agency:"GUT Toronto",        category:"Glass: The Lion for Change", sub:"Glass",      status:"Shortlisted", link:"https://www.specialolympics.ca/"},
+  {id:4,  campaign:"Klick Health Pharma Work", brand:"Pharma Client",       agency:"Klick Health",       category:"Health & Wellness",          sub:"Health",     status:"Shortlisted", link:"https://www.klickhealth.com/"},
+  {id:5,  campaign:"NFA Health Campaign",      brand:"Canadian Brand",      agency:"No Fixed Address",   category:"Health & Wellness",          sub:"Health",     status:"Shortlisted", link:"https://nofixedaddress.ca/"},
+  {id:6,  campaign:"Outdoor Campaign",         brand:"Canadian Client",     agency:"Rethink",            category:"Outdoor Lions",              sub:"Outdoor",    status:"Shortlisted", link:"https://rethinkca.com/"},
+  {id:7,  campaign:"Courage Campaign",         brand:"Canadian Brand",      agency:"Courage",            category:"Health & Wellness",          sub:"Health",     status:"Shortlisted", link:"https://courageca.com/"},
+  {id:8,  campaign:"The Undropped Kit",        brand:"ASICS",               agency:"Angry Butterfly",    category:"Film Lions",                 sub:"Film",       status:"Shortlisted", link:"https://www.asics.com/ca/en-ca/"},
+  {id:9,  campaign:"Heinz Outdoor",            brand:"Heinz Ketchup",       agency:"Rethink",            category:"Outdoor Lions",              sub:"Outdoor",    status:"Shortlisted", link:"https://www.heinz.ca/"},
+  {id:10, campaign:"Infinite Saree",           brand:"Red Dot Foundation",  agency:"Carat / UM Toronto", category:"Media Lions",                sub:"Media",      status:"Shortlisted", link:"https://www.reddotfoundation.org/"},
+  {id:11, campaign:"Dentsu Creative Work",     brand:"Canadian Brand",      agency:"Dentsu Creative",    category:"Film Craft",                 sub:"Film",       status:"Shortlisted", link:"https://www.dentsu.ca/"},
+  {id:12, campaign:"LG2 Design Work",          brand:"Canadian Brand",      agency:"LG2",                category:"Design Lions",               sub:"Design",     status:"Shortlisted", link:"https://www.lg2.com/"},
+  {id:13, campaign:"VW Campaign",              brand:"Volkswagen",          agency:"TBWA\\Canada",       category:"Outdoor Lions",              sub:"Outdoor",    status:"Shortlisted", link:"https://www.volkswagen.ca/"},
+  {id:14, campaign:"Edelman Canada PR",        brand:"Canadian Brand",      agency:"Edelman Canada",     category:"PR Lions",                   sub:"PR",         status:"Shortlisted", link:"https://www.edelman.com/"},
 ];
 
 const STATUS_CFG = {
@@ -216,7 +218,7 @@ function App() {
         Look for shortlists AND winners from agencies including: Rethink, TBWA Canada, GUT Toronto, Klick Health, Dentsu Creative Canada, LG2, Cossette, McCann Canada, No Fixed Address, Ogilvy Canada, Angry Butterfly, Courage, Publicis Canada, Edelman Canada, UM Toronto, Carat Canada, Tank Worldwide, Diamond.
         Return ONLY a valid JSON array. No explanation. No markdown. No backticks.
         Each object must have exactly these fields:
-        {"campaign":"string","brand":"string","agency":"string","category":"string","subcategory":"one of: Glass|Innovation|Outdoor|Health|Film|Media|Design|PR|Social|Pharma|Other","status":"one of: Shortlisted|Bronze|Silver|Gold|Grand Prix"}`
+        {"campaign":"string","brand":"string","agency":"string","category":"string","subcategory":"one of: Glass|Innovation|Outdoor|Health|Film|Media|Design|PR|Social|Pharma|Other","status":"one of: Shortlisted|Bronze|Silver|Gold|Grand Prix","link":"url or empty string"}`
       );
       const m = text.match(/\[[\s\S]*?\]/);
       if (m) {
@@ -384,8 +386,13 @@ function App() {
                 <div key={e.id} className="entry-row" style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",borderBottom:`1px solid ${BORDER}`,background:"#fff",transition:"background 0.15s"}}>
                   <div style={{fontSize:18,width:24,textAlign:"center",flexShrink:0}}>{CAT_ICONS[e.sub]||"⭐"}</div>
                   <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontWeight:700,fontSize:13,color:DARK,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{e.campaign}</div>
-                    <div style={{fontSize:11,color:MID,marginTop:1}}>{e.brand} · <span style={{color:BLUE}}>{e.agency}</span></div>
+                    <div style={{fontWeight:700,fontSize:13,color:DARK,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                      {e.link ? <a href={e.link} target="_blank" rel="noopener noreferrer" style={{color:DARK,textDecoration:"underline"}}>{e.campaign}</a> : e.campaign}
+                    </div>
+                    <div style={{fontSize:11,color:MID,marginTop:1}}>
+                      {e.brand} · <span style={{color:BLUE}}>{e.agency}</span>
+                      {e.link && <span style={{marginLeft:8}}><a href={e.link} target="_blank" rel="noopener noreferrer" style={{color:BLUE,fontSize:10,fontWeight:700}}>View →</a></span>}
+                    </div>
                     <div style={{fontSize:10,color:"#bbb",marginTop:1}}>{e.category}</div>
                   </div>
                   <div style={{padding:"3px 9px",borderRadius:20,background:sc.bg,color:sc.color,fontSize:10,fontWeight:700,whiteSpace:"nowrap",flexShrink:0}}>{sc.label}</div>
