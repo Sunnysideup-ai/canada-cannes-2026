@@ -196,18 +196,29 @@ function App() {
           method:"POST",
           headers:{"Content-Type":"application/json"},
           body: JSON.stringify({
-            contents:[{parts:[{text: prompt}]}]
+            contents:[{parts:[{text: prompt}]}],
+            tools:[{
+              googleSearch: {}
+            }]
           })
         });
         const d = await r.json();
         if (d.error) {
-          const errMsg = d.error.message || "";
-          if (errMsg.includes("quota") || errMsg.includes("exceeded")) {
-            throw new Error("API_QUOTA_ERROR");
-          }
-          throw new Error(errMsg);
+          throw new Error(d.error.message || "API Error");
         }
-        return d.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        
+        // Handle tool use responses
+        let result = "";
+        if (d.candidates) {
+          const candidate = d.candidates[0];
+          if (candidate.content && candidate.content.parts) {
+            for (const part of candidate.content.parts) {
+              if (part.text) result += part.text;
+              if (part.toolUseBlock) result += part.toolUseBlock.text || "";
+            }
+          }
+        }
+        return result;
       } catch (e) {
         throw e;
       }
@@ -215,44 +226,54 @@ function App() {
 
     try {
       const text = await ask(
-        `Search the web for the very latest Canadian agency results at Cannes Lions 2026 (festival runs June 22-26 2026 in Cannes France). 
-        Look for shortlists AND winners from agencies including: Rethink, TBWA Canada, GUT Toronto, Klick Health, Dentsu Creative Canada, LG2, Cossette, McCann Canada, No Fixed Address, Ogilvy Canada, Angry Butterfly, Courage, Publicis Canada, Edelman Canada, UM Toronto, Carat Canada, Tank Worldwide, Diamond.
-        Return ONLY a valid JSON array. No explanation. No markdown. No backticks.
-        Each object must have exactly these fields:
-        {"campaign":"string","brand":"string","agency":"string","category":"string","subcategory":"one of: Glass|Innovation|Outdoor|Health|Film|Media|Design|PR|Social|Pharma|Other","status":"one of: Shortlisted|Bronze|Silver|Gold|Grand Prix","link":"url or empty string"}`
+        `Using web search, find the latest Canadian agency winners at Cannes Lions 2026 (June 22-26 2026). List campaigns that won Gold, Silver, or Bronze medals. Include: campaign name, brand, agency name, which Lion they won (Gold/Silver/Bronze/Grand Prix), and the category.
+        
+Return ONLY a valid JSON array with NO markdown backticks. Each entry must have these exact fields:
+{
+  "campaign": "campaign name",
+  "brand": "brand name",
+  "agency": "agency name",
+  "category": "lion category",
+  "subcategory": "Glass|Innovation|Outdoor|Health|Film|Media|Design|PR|Social|Pharma|Other",
+  "status": "Shortlisted|Bronze|Silver|Gold|Grand Prix",
+  "link": "url or empty string"
+}
+
+Only include entries where you found confirmed winners from the search results.`
       );
+      
       const m = text.match(/\[[\s\S]*?\]/);
       if (m) {
-        const fresh = JSON.parse(m[0]).map((e,i)=>({...e,id:3000+i}));
-        setEntries(prev=>{
-          const keyOf = e=>`${e.campaign}|||${e.category}`;
-          const map = new Map(prev.map(e=>[keyOf(e),e]));
-          fresh.forEach(f=>map.set(keyOf(f),{...(map.get(keyOf(f))||{}), ...f}));
-          return Array.from(map.values());
-        });
-        showToast(`✅ Success! Found ${fresh.length} fresh entries from Cannes`);
+        try {
+          const fresh = JSON.parse(m[0]).map((e,i)=>({...e,id:3000+i}));
+          if (fresh.length > 0) {
+            setEntries(prev=>{
+              const keyOf = e=>`${e.campaign}|||${e.category}`;
+              const map = new Map(prev.map(e=>[keyOf(e),e]));
+              fresh.forEach(f=>map.set(keyOf(f),{...(map.get(keyOf(f))||{}), ...f}));
+              return Array.from(map.values());
+            });
+            showToast(`✅ Found ${fresh.length} winners from Cannes!`);
+          } else {
+            showToast("📍 No new winners found yet. Awards still being announced.");
+          }
+        } catch(parseErr) {
+          showToast("⚠️ Couldn't parse results. Check results coming in...");
+        }
       } else {
-        showToast("⚠️ Got results but couldn't parse JSON. Try again in a moment.");
+        showToast("🔍 Searching... No results yet. Awards coming soon?");
       }
       setLastUpdated(new Date());
     } catch(e) {
       const msg = e.message || "Unknown error";
-      if (msg.includes("API_QUOTA_ERROR")) {
-        showToast("❌ Quota exceeded. Check your billing or try again later.");
-      } else if (msg.includes("API_KEY") || msg.includes("invalid")) {
-        showToast("❌ Invalid API key. Check in ⚙️ Setup.");
-      } else {
-        showToast("❌ " + msg.substring(0,60));
-      }
+      showToast("❌ " + msg.substring(0,60));
     } finally { setLoading(false); }
 
     try {
       const s = await ask(
-        `Search for the latest news on how Canada is performing at Cannes Lions 2026 (June 22-26 2026). 
-        Write 2-3 punchy journalistic sentences covering Canada's overall showing, standout agencies, and any Lions won so far. 
-        Be specific with agency names and campaign names. Plain text only, no markdown.`
+        `Search the web for latest news on Canada's performance at Cannes Lions 2026. Write 2-3 short sentences about which Canadian agencies won Lions and how they performed. Be specific with names and awards. Just plain text, no markdown.`
       );
-      if (s && !s.includes("exceeded") && !s.includes("quota")) {
+      if (s && !s.includes("error") && s.length > 20) {
         setAiSummary(s.replace(/\*\*/g,"").replace(/\*/g,"").trim());
       }
     } catch(e) {} finally { setSummaryLoading(false); }
@@ -306,7 +327,7 @@ function App() {
 
         {(aiSummary||summaryLoading) && (
           <div className="slide-in" style={{marginTop:14,padding:"11px 14px",background:"#1C1C1C",borderRadius:8,borderLeft:`3px solid ${MAPLE}`,fontSize:13,color:"#CCC",lineHeight:1.65}}>
-            {summaryLoading ? <span className="pulsing" style={{color:"#555"}}>🔍 Fetching latest from Cannes...</span> : aiSummary}
+            {summaryLoading ? <span className="pulsing" style={{color:"#555"}}>🔍 Searching latest from Cannes...</span> : aiSummary}
           </div>
         )}
       </div>
@@ -355,7 +376,7 @@ function App() {
               disabled={loading}
               style={{padding:"6px 16px",background:loading?"#eee":MAPLE,color:loading?MID:"#fff",border:"none",borderRadius:20,fontSize:12,fontWeight:700,display:"flex",alignItems:"center",gap:6}}
             >
-              <span className={loading?"pulsing":""}>{loading?"Updating...":"🔄 Refresh"}</span>
+              <span className={loading?"pulsing":""}>{loading?"Searching...":"🔄 Refresh"}</span>
             </button>
           </div>
 
@@ -407,9 +428,9 @@ function App() {
       <div style={{padding:"0 12px 28px",textAlign:"center"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginBottom:4}}>
           <Leaf size={12}/>
-          <span style={{fontSize:10,color:"#bbb"}}>Canada at Cannes Lions 2026 · Powered by Google Gemini</span>
+          <span style={{fontSize:10,color:"#bbb"}}>Canada at Cannes Lions 2026 · Live Web Search</span>
         </div>
-        <div style={{fontSize:10,color:"#ccc"}}>Data: Strategy Magazine, Media in Canada, Cannes Lions official · Awards Jun 22–26</div>
+        <div style={{fontSize:10,color:"#ccc"}}>Data: Live web search via Google Gemini · Awards Jun 22–26</div>
       </div>
     </div>
   );
