@@ -188,7 +188,7 @@ function App() {
     setSummaryLoading(true);
     setAiSummary("");
 
-    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
+    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`;
 
     const ask = async (prompt) => {
       try {
